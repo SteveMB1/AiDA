@@ -1,0 +1,15 @@
+---
+- name: Check MongoDB
+  mongodb_check:
+    host: "{{ inventory_hostname }}"
+    port: "{{ mongo_ports.get((hostvars[inventory_hostname]['tags']['Role'] | default('')).lower(), 27017 ) }}"
+    max_connections: "{{ max_connections }}"
+    queue_ratio: "{{ queue_ratio }}"
+    max_lag: "{{ max_lag }}"
+  vars:
+    mongo_ports:
+      router: 27017
+      arbiter: 27018
+      shardsvr: 27018
+      configsvr: 27019
+  register: mongo_check

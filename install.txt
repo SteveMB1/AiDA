@@ -1,0 +1,13 @@
+elasticsearch
+fastapi
+transformers
+'accelerate>=0.26.0'
+torch
+aiohttp
+uvicorn
+bitsandbytes
+flash-attn
+
+M1 Mac
+#numpy
+#scipy

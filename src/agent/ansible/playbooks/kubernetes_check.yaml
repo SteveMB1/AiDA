@@ -1,0 +1,9 @@
+---
+- name: Check Kubernetes
+  kubernetes_check:
+    hostname: "{{ inventory_hostname }}"
+  register: kubernetes_check
+
+- name: Nvidia Metrics
+  nvidia_smi_metrics:
+  register: nvidia_check

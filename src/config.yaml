@@ -1,0 +1,171 @@
+---
+# compare logic can be one of the following:  gte = >= || lte <= || equals == || not_equals !=
+status_checks:
+  fail_state:
+    default:
+      LastUpdate:
+        compare_logic: gte
+        value: 600000
+        description: "Last Status Update >= 10 minutes"
+    time_drift:
+      time_drift_seconds:
+        - compare_logic: gte
+          value: 10
+          description: "Time Drift >= 10 seconds"
+        - compare_logic: lte
+          value: -10
+          description: "Time Drift <= -10 seconds"
+    cloudwatch:
+      cpu:
+        - compare_logic: gte
+          value: 75
+          description: "CPU Utilization >= 75% (monitor for potential scaling)"
+        - compare_logic: gte
+          value: 90
+          description: "CPU Utilization >= 90% (recommend instance upgrade)"
+      network_total_pct:
+        - compare_logic: gte
+          value: 75
+          description: "Total Network Bandwidth Usage >= 75% (evaluate for higher throughput instance)"
+      /var/lib/mongo_idle_time_pct:
+        - compare_logic: lte
+          value: 20
+          description: "MongoDB Volume Idle Time <= 20% (recommend increasing EBS IOPS/throughput)"
+      /var/lib/rabbit_idle_time_pct:
+        - compare_logic: lte
+          value: 20
+          description: "RabbitMQ Volume Idle Time <= 20% (recommend increasing EBS IOPS/throughput)"
+      /var/lib/elasticsearch_idle_time_pct:
+        - compare_logic: lte
+          value: 20
+          description: "Elasticsearch Volume Idle Time <= 20% (recommend increasing EBS IOPS/throughput)"
+      /var/lib/cassandra_idle_time_pct:
+        - compare_logic: lte
+          value: 20
+          description: "Cassandra Volume Idle Time <= 20% (recommend increasing EBS IOPS/throughput)"
+    mongodb:
+      replication_lag_ms:
+        - compare_logic: gte
+          value: 12000
+          description: "Replication Lag >= 2 minutes (potential EBS/memory performance issue)"
+      replica_set_status:
+        - compare_logic: gte
+          value: 1
+          description: "Problem Host(s) in Replica Set >= 1"
+      queue:
+        - compare_logic: equals
+          value: false
+          description: "MongoDB queue stalled; potential write bottleneck"
+      initial_sync_progress_pct:
+          - compare_logic: not_equals
+            value: 100
+            description: "Initial sync incomplete (<100%)"
+      initial_sync_any:
+        - compare_logic: equals
+          value: true
+          description: "At least one replica set member is in initial sync"
+    redis:
+      crud_check:
+        - compare_logic: not_equals
+          value: "success"
+          description: "Redis CRUD Check failed"
+    nvidia:
+      average_utilization:
+        - compare_logic: gte
+          value: 85
+          description: "GPU Utilization >= 85% (consider GPU-optimized instance)"
+      average_memory_used:
+        - compare_logic: gte
+          value: 85
+          description: "GPU Memory Usage >= 85% (evaluate memory-optimized instance)"
+        - compare_logic: lte
+          value: 15
+          description: "GPU Memory Usage <= 15% (possible GPU overprovisioning)"
+    rabbitmq:
+      is_high_queues:
+        - compare_logic: equals
+          value: true
+          description: "RabbitMQ queues are slow; investigate ingestion bottlenecks"
+      is_unsynchronized_mirrors:
+        - compare_logic: equals
+          value: true
+          description: "The RabbitMQ queues are unsynchronized across the cluster"
+    kubernetes:
+      has_crashloopbackoff:
+        - compare_logic: equals
+          value: true
+          description: "Pods in CrashLoopBackOff; check resource limits or app issues"
+      has_oomkilled:
+        - compare_logic: equals
+          value: true
+          description: "Pods OOMKilled; instance may require more memory"
+      has_imagepullbackoff:
+        - compare_logic: equals
+          value: true
+          description: "Pods in ImagePullBackOff status; image pull issue"
+      has_pending:
+        - compare_logic: equals
+          value: true
+          description: "Pending pods may indicate CPU/RAM pressure or scheduling issues"
+      has_errimagepull:
+        - compare_logic: equals
+          value: true
+          description: "ErrImagePull pods detected"
+      has_containercreating:
+        - compare_logic: equals
+          value: true
+          description: "Pods stuck in ContainerCreating; volume or image issue"
+    elasticsearch:
+      index_status:
+        - compare_logic: equals
+          value: false
+          description: "Elasticsearch indices not healthy (status != green)"
+      index_limit:
+        - compare_logic: gte
+          value: 75
+          description: "Index limit >= 75% (consider shard or volume reconfiguration)"
+    ram:
+      - compare_logic: gte
+        value: 96
+        description: "RAM Usage >= 96% (recommend scaling up to avoid swap usage)"
+      - compare_logic: lte
+        value: 10
+        description: "RAM Usage <= 10% (consider instance downscale for cost efficiency)"
+    disk:
+      - partition: /
+        value: 75
+        compare_logic: gte
+        description: "Root Disk Utilization >= 75% (recommend EBS scale-up)"
+      - partition: /var/lib/mongo
+        value: 75
+        compare_logic: gte
+        description: "MongoDB Disk Utilization >= 75% (consider expanding EBS volume)"
+      - partition: /var/lib/mongo/journal
+        value: 75
+        compare_logic: gte
+        description: "MongoDB Journal Disk Utilization >= 75% (consider EBS tuning)"
+      - partition: /var/lib/rabbitmq
+        value: 75
+        compare_logic: gte
+        description: "RabbitMQ Disk Utilization >= 75% (consider expanding EBS volume)"
+      - partition: /var/log
+        value: 75
+        compare_logic: gte
+        description: "/var/log Disk Utilization >= 75% (may need EBS growth)"
+      - partition: /var/log/audit
+        value: 75
+        compare_logic: gte
+        description: "/var/log/audit Disk Utilization >= 75% (consider growing log volume)"
+      - partition: /var
+        value: 75
+        compare_logic: gte
+        description: "/var Disk Utilization >= 75% (consider growing volume)"
+      - partition: swap
+        value: 75
+        compare_logic: gte
+        description: "SWAP Disk Utilization >= 75% (memory pressure detected; recommend RAM upgrade)"
+
+pagerduty:
+  from: ""
+  token: ""
+  id: ""

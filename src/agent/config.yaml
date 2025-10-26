@@ -1,0 +1,28 @@
+---
+status_checks:
+  environments:
+    - project: ""
+      environment: development
+      region: us-east-2
+      ai_diagnostics_enabled: false
+      programs:
+#        MongoDB:
+#          host_tag: tag_Program_MongoDB
+#          scale_as_group_tag: MongoDB_ReplicaSet
+#        RabbitMQ:
+#          host_tag: tag_Program_RabbitMQ
+#          scale_as_group_tag: Program
+#        Kubernetes:
+#          host_tag: tag_Program_Kubernetes
+#        ElasticSearch:
+#          host_tag: tag_Program_ElasticSearch
+#          scale_as_group_tag: Program
+#        Redis:
+#          host_tag: tag_Program_Redis
+#          scale_as_group_tag: Program
+
+  playbooks:
+    - 'playbooks/common.yaml'
+  refresh_rates:
+    failing_services_sec: 150.0
+    passing_services_sec: 300.0

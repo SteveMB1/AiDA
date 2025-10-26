@@ -1,0 +1,5 @@
+---
+- name: Check ElasticSearch
+  elasticsearch_check:
+    uri: http://localhost:9200
+  register: elasticsearch_check

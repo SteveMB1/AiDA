@@ -1,0 +1,16 @@
+---
+- name: Check RabbitMQ
+  rabbitmq_check:
+    uri: >-
+      http://localhost:15672/api
+    username: "{{ rabbitmq_username }}"
+    password: "{{ rabbitmq_password }}"
+    queue_ratio: "{{ queue_ratio }}"
+    max_lag: "{{ max_lag }}"
+  vars:
+    rabbitmq_ports:
+      manager: 15672
+      node: 5672
+    rabbitmq_username: "admin"
+    rabbitmq_password: "admin"
+  register: rabbitmq_check

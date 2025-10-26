@@ -1,0 +1,9 @@
+---
+- name: Ansible Temp Directories
+  hosts: all
+  become: false
+  gather_facts: false
+  tasks:
+    - name: Delete Ansible Temp directories
+      shell: rm -rf /tmp/ansible*
+      ignore_errors: true
